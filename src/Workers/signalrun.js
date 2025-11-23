@@ -1,6 +1,6 @@
-const { startFetchingData } = require("../utils/stockFilter")
+const { startFetchingData } = require("../utils/stockFilter");
 
-const { scheduleJob } = require("../utils/jobScheduler")
+const { scheduleJob } = require("../utils/jobScheduler");
 
 
     (() => {
