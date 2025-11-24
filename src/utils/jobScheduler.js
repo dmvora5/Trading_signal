@@ -74,7 +74,7 @@ function scheduleJob({
         console.log('Next job scheduled at:', nextRunTime.toLocaleString());
 
         schedule.scheduleJob(nextRunTime, function () {
-            if (!isForexMarketOpen() && !isInDailyBreak()) {
+            if (isForexMarketOpen() && !isInDailyBreak()) {
                 console.log('Job is running at:', new Date().toLocaleString());
                 jobFunction();
             } else {
