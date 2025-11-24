@@ -6,34 +6,38 @@ function isForexMarketOpen() {
     return day !== 6 && day !== 0; // Open Mon–Fri
 }
 
-function scheduleJob({jobFunction}) {
+function scheduleJob({ jobFunction }) {
     if (typeof jobFunction !== "function") {
         throw new Error("jobFunction must be a function");
     }
 
-    // Rule: Run every 4 hours + 1 minute delay (UTC)
+    // 🔥 RUN AT:
+    // IST: 03:31, 07:31, 11:31, 15:31, 19:31, 23:31
+    // UTC equivalents: 22:01, 02:01, 06:01, 10:01, 14:01, 18:01
+
     const rule = new schedule.RecurrenceRule();
     rule.tz = "UTC";
-    rule.minute = 1;
-    rule.hour = new schedule.Range(0, 23, 4);
+    rule.minute = 1; // 1 minute buffer
+    rule.hour = [22, 2, 6, 10, 14, 18]; // UTC hours that match IST 03:31 start
 
-    // Create job
     const job = schedule.scheduleJob(rule, () => {
         const now = new Date();
 
         if (isForexMarketOpen()) {
-            console.log("🔥 Job executed at:", now.toLocaleString());
+            console.log("🔥 Job executed at (IST):", now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }));
             jobFunction();
         } else {
-            console.log("⛔ Market closed, job skipped:", now.toLocaleString());
+            console.log("⛔ Market closed, skipped:", now.toLocaleString());
         }
 
-        // Log next run after execution
-        console.log("⏭ Next run:", job.nextInvocation().toLocaleString());
+        console.log("⏭ Next run (IST):",
+            job.nextInvocation().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+        );
     });
 
-    // Log next scheduled time when scheduler starts
-    console.log("⏭ First run scheduled at:", job.nextInvocation().toLocaleString());
+    console.log("⏭ First run (IST):",
+        job.nextInvocation().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+    );
 
     return job;
 }
